@@ -9,6 +9,19 @@ description: Access AWS documentation, SDKs, service availability, regions, and 
 
 Rather than dumping full MCP tool schemas into agent context up front, query `awskb` dynamically to discover tools and retrieve only the documentation or skills needed.
 
+## Pre-requisite / Installation Check
+
+Before running `awskb` commands, check if the CLI is available in the environment:
+
+```bash
+which awskb || command -v awskb || Get-Command awskb
+```
+
+**If `awskb` is not installed**, refer to [INSTALL.md](INSTALL.md) or install it immediately:
+- **Fastest via `uv`:** `uv tool install git+https://github.com/davidw-philips/awskb`
+- **On-the-fly execution via `uvx`:** prefix commands with `uvx --from git+https://github.com/davidw-philips/awskb awskb ...`
+- **Via `pipx` or `pip`:** `pipx install git+https://github.com/davidw-philips/awskb.git` or `pip install git+https://github.com/davidw-philips/awskb.git`
+
 ## When to Use
 
 Use `awskb` whenever you need:
