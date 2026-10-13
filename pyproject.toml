@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "awskb"
+version = "0.1.0"
+description = "Token-efficient CLI for querying AWS documentation, SDKs, and skills via the AWS Knowledge MCP Server."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "davidw-philips" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Documentation",
+]
+dependencies = []
+
+[project.scripts]
+awskb = "awskb.cli:main"
