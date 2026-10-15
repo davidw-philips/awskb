@@ -76,6 +76,17 @@ Call any tool using JSON arguments:
 
 ---
 
+# TLS / Enterprise CA Certificates
+
+`awskb` always verifies HTTPS certificates. If your network uses an enterprise TLS inspection proxy, provide its trusted CA bundle through the standard Python environment variables:
+
+```powershell
+$env:SSL_CERT_FILE = 'C:\path\to\corporate-ca-bundle.pem'
+# Or use a directory containing hashed CA certificates:
+$env:SSL_CERT_DIR = 'C:\path\to\corporate-ca-directory'
+```
+
+Set these variables before running `awskb`. Do not disable certificate verification. If validation fails, the CLI reports that `SSL_CERT_FILE` or `SSL_CERT_DIR` can be set.
 ## Agent Skills Included
 
 Pre-packaged skills following official agent specifications are provided for:

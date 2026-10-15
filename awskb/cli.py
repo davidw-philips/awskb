@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import ssl
 import sys
 import urllib.error
 import urllib.request
@@ -19,6 +20,14 @@ from typing import Any, Dict, List, Optional
 
 MCP_ENDPOINT = os.environ.get("AWSKB_ENDPOINT", "https://knowledge-mcp.global.api.aws")
 USER_AGENT = "awskb-cli/0.1.0"
+
+
+def ssl_context() -> ssl.SSLContext:
+    """Build a verified TLS context using optional CA environment overrides."""
+    return ssl.create_default_context(
+        cafile=os.environ.get("SSL_CERT_FILE") or None,
+        capath=os.environ.get("SSL_CERT_DIR") or None,
+    )
 
 
 def send_mcp_request(method: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -43,7 +52,7 @@ def send_mcp_request(method: str, params: Optional[Dict[str, Any]] = None) -> Di
     )
 
     try:
-        with urllib.request.urlopen(req, timeout=30) as response:
+        with urllib.request.urlopen(req, timeout=30, context=ssl_context()) as response:
             resp_body = response.read().decode("utf-8")
             return json.loads(resp_body)
     except urllib.error.HTTPError as e:
@@ -51,7 +60,10 @@ def send_mcp_request(method: str, params: Optional[Dict[str, Any]] = None) -> Di
         print(f"Error: HTTP {e.code} from MCP endpoint: {err_body}", file=sys.stderr)
         sys.exit(1)
     except urllib.error.URLError as e:
-        print(f"Error connecting to MCP endpoint ({MCP_ENDPOINT}): {e.reason}", file=sys.stderr)
+        message = str(e.reason)
+        if "CERTIFICATE_VERIFY_FAILED" in message:
+            message += " Set SSL_CERT_FILE or SSL_CERT_DIR to a trusted CA bundle."
+        print(f"Error connecting to MCP endpoint ({MCP_ENDPOINT}): {message}", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
         print(f"Unexpected error communicating with MCP endpoint: {e}", file=sys.stderr)
